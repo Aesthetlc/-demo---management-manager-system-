@@ -190,7 +190,7 @@
   <script id="list" type="text/html">
     {{each arr}}
     <tr>
-      <td><img src="{{$value.file}}.png" alt="" /></td>
+      <td><img src="{{$value.file}}" alt="" /></td>
       <td>{{$value.name}}</td>
       <td>{{$value.nickname}}</td>
       <td>{{$value.skill}}</td>
@@ -216,6 +216,7 @@
   <script>
     $('tbody').on('click', '.btn-danger', function () {
       var deleteId = $(this).attr('data-id');
+      var that = this;
       $.ajax({
         type: 'get',
         url: '/delMsg',
@@ -224,7 +225,12 @@
         },
         dataType: 'json',
         success: function (res) {
-          console.log(res);
+          if(res.code === 200){
+            alert("删除成功");
+            $(that).parents('tr').remove();
+          }else {
+            alert("删除失败");
+          }
         }
       })
     });
