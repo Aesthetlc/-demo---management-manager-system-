@@ -16,6 +16,13 @@
       <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+  <!-- 导入md5 -->
+  <script src="./lib/md5/md5.min.js"></script>
   <style>
     .login-panel {
       margin-top: 100px;
@@ -101,12 +108,25 @@
       </div>
     </div>
   </div>
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
-  <!-- 导入md5 -->
-  <script src="./lib/md5/md5.min.js"></script>
+
+
+  <!-- 注册 -->
+  <script>
+    $('.btn-success').click(function () {
+      var data = $('form').serializeArray();
+      data[1].value = md5(data[1].value);
+      // 参数可以传入：{name:data[0].value,password:md5(data[1].value)}
+      // 参数也可以传入 :data(获取的是 数组 包含着 对象)
+      $.post('/register', data, function (res) {
+        if (res.code === 200) {
+          alert(res.msg);
+          location.href = "login.html";
+        } else {
+          alert(res.msg);
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

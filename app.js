@@ -71,16 +71,28 @@ app.post('/addMsg', upload.single('heroIcon'), (req, res) => {
     })
 });
 
-// //修改数据
-// let updateSql = 'update heroes set ? where id=?';
-// let values = {
-//     name:?,
-//     skill:?,
-//     file:uploads\8c725103a570c3163a4c2b61f412e7a8,
-// }
-// app.post('/editMsg', (req, res) => {
-//     mysql(updateSql, , (err, result) =>{
-//         if (err) throw err;
-//         res.send(result);
-//     })
-// });
+//4.注册
+app.post('/register', (req, res) => {
+    let registerSql = "insert into user set ?"
+    //方式1
+    /*  let values = {
+        username:req.body.name,
+        password:req.body.password
+    } */
+    //方式2
+    // 直接传入req.body
+    console.log(req.body)
+    mysql(registerSql, req.body, (err, result) => {
+        if (err) {
+            res.send({
+                code: 210,
+                msg: "注册失败"
+            });
+        } else {
+            res.send({
+                code: 200,
+                msg: "注册成功"
+            })
+        }
+    });
+});
