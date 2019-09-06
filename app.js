@@ -45,7 +45,6 @@ app.get('/delMsg', (req, res) => {
 
 //3.新增英雄数据
 app.post('/addMsg', upload.single('heroIcon'), (req, res) => {
-    console.log(req.body);
     //upload.single() 文件域的name值
     let insertSql = 'insert into heroes set ?';
     let values = {
@@ -100,7 +99,7 @@ app.post('/login', (req, res) => {
     let loginSql = "select * from user where username = ? and password = ?"
     const username = req.body.username;
     const password = req.body.password;
-    mysql(loginSql, [username,password], (err, result) => {
+    mysql(loginSql, [username, password], (err, result) => {
         if (result.length > 0) {
             res.send({
                 code: 200,
@@ -112,5 +111,51 @@ app.post('/login', (req, res) => {
                 msg: "登录失败"
             });
         }
+    })
+});
+
+//6.获取指定id的数据
+app.get('/getMsgById', (req, res) => {
+    var id = req.query.id;
+    if (!id || isNaN(id)) {
+        res.send("参数错误");
+        return;
+    }
+    let selectSql = 'select * from heroes where id = ?';
+    mysql(selectSql, id, (err, result) => {
+        if (err) throw err;
+        res.send(result[0]);
+    });
+});
+
+//7.保存修改数据
+app.post('/saveEditMsg', upload.single('heroIcon'), (req, res) => {
+    //upload.single() 文件域的name值
+    let insertSql = 'update heroes set ? where id =?';
+    let values = {
+        name: req.body.heroName,
+        nickname: req.body.heroNickName,
+        skill: req.body.skillName,
+    }
+    // 判断图像是否修改了
+    // console.log(req.file); // 如果没选择头像，req.file 的值为 undefined
+    if (req.file != undefined) {
+        values.file = req.file.filename;
+    }
+    console.log(req.body)  
+    mysql(insertSql, [values, req.body.id], (err, result) => {
+        console.log(result)
+        if (err) {
+            res.send({
+                code: 210,
+                msg: '添加失败'
+            });
+        } else {
+            res.send({
+                code: 200,
+                msg: '添加成功'
+            });
+        }
+
     })
 });

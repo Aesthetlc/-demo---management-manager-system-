@@ -18,6 +18,8 @@
       <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+  <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
+  <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
   <style>
     .wrap {
       position: fixed;
@@ -105,24 +107,27 @@
                 <div class="form-group">
                   <label for="heroName" class="col-sm-2 control-label">姓名</label>
                   <div class="col-sm-10">
-                    <input required type="text" class="form-control" id="heroName" name="heroName" placeholder="请输入姓名"
-                      value="盖伦" />
+                    <input required type="text" class="form-control" id="heroName" name="heroName" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="heroName" class="col-sm-2 control-label">昵称</label>
+                  <div class="col-sm-10">
+                    <input required type="text" class="form-control" id="heroNickName" name="heroNickName" />
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="skillName" class="col-sm-2 control-label">技能</label>
                   <div class="col-sm-10">
-                    <input required type="text" class="form-control" id="skillName" name="skillName" placeholder="请输入技能"
-                      value="躲草丛" />
+                    <input required type="text" class="form-control" id="skillName" name="skillName" />
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="heroIcon" class="col-sm-2 control-label">头像</label>
                   <div class="col-sm-10">
-                    <img src="lib/img/盖伦.png" alt="">
                     <input required type="file" class="file-input" id="heroIcon" name="heroIcon" />
                     <!-- 预览的标签 -->
-                    <img src="./images/盖伦.png" class="preview" alt="" />
+                    <img src="" class="preview" alt="" />
                   </div>
                 </div>
                 <div class="form-group">
@@ -140,8 +145,57 @@
       </div>
     </div>
   </div>
-  <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
-  <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+
+  <!-- 编辑 -->
+  <script>
+    //获取浏览器传过来的id
+    var id = location.search;
+    $.get('/getMsgById' + id, function (res) {
+      console.log(res)
+      $('#heroName').val(res.name);
+      $('#heroNickName').val(res.nickname);
+      $('#skillName').val(res.skill);
+      $('.preview').attr('src', res.file);
+      $('input[type="hidden"]').val(res.id);
+    });
+  </script>
+
+  <!-- 编辑信息保存 -->
+  <script>
+    $('.btn-primary').click(function (e) {
+      e.preventDefault();
+      var formdata = new FormData($('form')[0]);
+      $.ajax({
+        type: 'post',
+        url: '/saveEditMsg',
+        dataType: 'json',
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+          if (res.code === 200) {
+            alert("修改成功");
+            location.href = "index.html"
+          } else {
+            alert("修改失败");
+          }
+        }
+      })
+    })
+  </script>
+
+  <!-- 头像缩略图 -->
+  <script>
+    $('#heroIcon').change(function () {
+      var fileObj = this.files[0];
+      var str = URL.createObjectURL(fileObj);
+      $('.col-sm-10 img').attr('src', str);
+    });
+  </script>
+
+
+
+
 </body>
 
 </html>
