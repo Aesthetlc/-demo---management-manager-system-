@@ -153,10 +153,11 @@
               <table id="my-table" class="table table-bordered mp15">
                 <thead>
                   <tr>
-                    <th width="25%">头像</th>
-                    <th width="25%">姓名</th>
-                    <th width="25%">技能</th>
-                    <th width="25%">操作</th>
+                    <th width="20%">头像</th>
+                    <th width="20%">姓名</th>
+                    <th width="20%">昵称</th>
+                    <th width="20%">技能</th>
+                    <th width="20%">操作</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -191,6 +192,7 @@
     <tr>
       <td><img src="{{$value.file}}.png" alt="" /></td>
       <td>{{$value.name}}</td>
+      <td>{{$value.nickname}}</td>
       <td>{{$value.skill}}</td>
       <td>
         <button onclick="location.href='./edit.html'" class="btn btn-primary" data-id="{{$value.id}}">编辑</button>
@@ -207,7 +209,7 @@
         arr: res,
       });
       $('tbody').html(str);
-    });
+    },'json');
   </script>
 
   <!-- 删除数据 -->
