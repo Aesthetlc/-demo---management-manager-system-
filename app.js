@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
 
 //获取数据
 app.get('/getMsg', (req, res) => {
-    let selectSql = 'select id,file,name,skill from heroes limit 10';
+    let selectSql = 'select id,file,name,skill from heroes order by id limit 10';
     mysql(selectSql, null, (err, result) => {
         if (err) throw err;
         res.send(result);
