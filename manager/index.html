@@ -195,7 +195,7 @@
       <td>{{$value.nickname}}</td>
       <td>{{$value.skill}}</td>
       <td>
-        <button onclick="location.href='./edit.html'" class="btn btn-primary" data-id="{{$value.id}}">编辑</button>
+        <button onclick="location.href='./edit.html?id={{$value.id}}'" class="btn btn-primary" data-id="{{$value.id}}">编辑</button>
         <button data-id="{{$value.id}}" class="btn btn-danger">删除</button>
       </td>
     </tr>
@@ -209,34 +209,35 @@
         arr: res,
       });
       $('tbody').html(str);
-    },'json');
+    }, 'json');
   </script>
 
   <!-- 删除数据 -->
   <script>
     $('tbody').on('click', '.btn-danger', function () {
-      var deleteId = $(this).attr('data-id');
-      var that = this;
-      $.ajax({
-        type: 'get',
-        url: '/delMsg',
-        data: {
-          deleteId : deleteId,
-        },
-        dataType: 'json',
-        success: function (res) {
-          if(res.code === 200){
-            alert("删除成功");
-            $(that).parents('tr').remove();
-          }else {
-            alert("删除失败");
+      var flag = confirm("笨蛋，你真的要删除此数据么，数据不可逆哦");
+      if (flag) {
+        var deleteId = $(this).attr('data-id');
+        var that = this;
+        $.ajax({
+          type: 'get',
+          url: '/delMsg',
+          data: {
+            deleteId: deleteId,
+          },
+          dataType: 'json',
+          success: function (res) {
+            if (res.code === 200) {
+              alert("删除成功");
+              $(that).parents('tr').remove();
+            } else {
+              alert("删除失败");
+            }
           }
-        }
-      })
+        })
+      }
     });
   </script>
-
-
 </body>
 
 </html>
