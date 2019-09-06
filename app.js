@@ -43,7 +43,6 @@ app.get('/delMsg', (req, res) => {
     });
 });
 
-
 //3.新增英雄数据
 app.post('/addMsg', upload.single('heroIcon'), (req, res) => {
     console.log(req.body);
@@ -81,7 +80,6 @@ app.post('/register', (req, res) => {
     } */
     //方式2
     // 直接传入req.body
-    console.log(req.body)
     mysql(registerSql, req.body, (err, result) => {
         if (err) {
             res.send({
@@ -95,4 +93,24 @@ app.post('/register', (req, res) => {
             })
         }
     });
+});
+
+//5.登录
+app.post('/login', (req, res) => {
+    let loginSql = "select * from user where username = ? and password = ?"
+    const username = req.body.username;
+    const password = req.body.password;
+    mysql(loginSql, [username,password], (err, result) => {
+        if (result.length > 0) {
+            res.send({
+                code: 200,
+                msg: "登录成功"
+            });
+        } else {
+            res.send({
+                code: 210,
+                msg: "登录失败"
+            });
+        }
+    })
 });

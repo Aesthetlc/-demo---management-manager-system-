@@ -16,6 +16,11 @@
       <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+  <script src="./lib/md5/md5.min.js"></script>
   <style>
     .login-panel {
       margin-top: 100px;
@@ -77,14 +82,14 @@
                 <div class="form-group">
                   <label for="userName" class="col-sm-2 control-label">用户名</label>
                   <div class="col-sm-10">
-                    <input type="text" name="username" value="叶良辰" class="form-control" id="username"
+                    <input type="text" name="username" value="" class="form-control" id="username"
                       placeholder="请输入用户名" />
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="userPass" class="col-sm-2 control-label">密码</label>
                   <div class="col-sm-10">
-                    <input type="password" name="password" value="1234" class="form-control" id="password"
+                    <input type="password" name="password" value="" class="form-control" id="password"
                       placeholder="请输入密码" />
                   </div>
                 </div>
@@ -113,10 +118,33 @@
       </div>
     </div>
   </div>
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+
+  <!-- 完成登录的功能 -->
+  <script>
+    $('.btn-success').click(function (e) {
+      e.preventDefault();
+      var username = $('#username').val();
+      var password = md5($('#password').val());
+      $.ajax({
+        type: 'post',
+        url: '/login',
+        dataType: 'json',
+        data: {
+          username: username,
+          password: password,
+        },
+        success: function (res) {
+          console.log(res)
+          if (res.code === 200) {
+            alert("登录成功");
+            location.href = "index.html";
+          } else {
+            alert("登录失败");
+          }
+        }
+      })
+    })
+  </script>
 </body>
 
 </html>
