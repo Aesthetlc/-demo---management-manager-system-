@@ -9,6 +9,7 @@
 
   <!-- Bootstrap -->
   <link href="./lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./lib/css/jquery.pagination.css">
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -21,6 +22,8 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
   <script src="./lib/js/template-web.js"></script>
+  <!-- 分页相关 -->
+  <script src="./lib/js/jquery.pagination.min.js"></script>
   <style>
     .wrap {
       position: fixed;
@@ -166,19 +169,7 @@
               </table>
             </div>
             <div class="panel-footer text-center">
-              <ul class="pagination">
-                <li>
-                  <a href="#" aria-label="Previous">
-                    <span aria-hidden="true">«</span>
-                  </a>
-                </li>
-                <li class="page-num"><a href="#">1/1</a></li>
-                <li>
-                  <a href="#" aria-label="Next">
-                    <span aria-hidden="true">»</span>
-                  </a>
-                </li>
-              </ul>
+              <div id="pagination" class="page"></div>
             </div>
           </div>
         </div>
@@ -195,21 +186,12 @@
       <td>{{$value.nickname}}</td>
       <td>{{$value.skill}}</td>
       <td>
-        <button onclick="location.href='./edit.html?id={{$value.id}}'" class="btn btn-primary" data-id="{{$value.id}}">编辑</button>
+        <button onclick="location.href='./edit.html?id={{$value.id}}'" class="btn btn-primary"
+          data-id="{{$value.id}}">编辑</button>
         <button data-id="{{$value.id}}" class="btn btn-danger">删除</button>
       </td>
     </tr>
     {{/each}}
-  </script>
-
-  <!-- 获取数据 -->
-  <script>
-    $.get('./getMsg', function (res) {
-      var str = template('list', {
-        arr: res,
-      });
-      $('tbody').html(str);
-    }, 'json');
   </script>
 
   <!-- 删除数据 -->
@@ -237,6 +219,51 @@
         })
       }
     });
+  </script>
+
+
+  <!-- 获取数据 -->
+  <script>
+    var params = {
+      page: 1, //第几页
+      pagesNum: '', //总页数
+    }
+
+    function loadData() {
+      $.get('./getMsg', params, function (res) {
+        var str = template('list', {
+          arr: res[0],
+        });
+        $('tbody').html(str);
+        params.pagesNum = Math.ceil((res[1][0].count) / 10);
+        page(params.page, params.pagesNum);
+      }, 'json');
+    }
+    loadData();
+  </script>
+
+
+  <!-- 分页显示 -->
+  <script>
+    function page(c, t) {
+      $("#pagination").pagination({
+        currentPage: c, // 表示开始显示第几页
+        totalPage: t, // 表示总页数
+        callback: function (current) {
+          // current // 表示当前被点击的页码
+          // 改变 params.page 的值
+          params.page = current;
+          // 重写调用接口，获取数据，从新将数据渲染到页面中
+          loadData();
+        }
+      });
+    }
+  </script>
+
+  <!-- 模糊搜索 -->
+  <script>
+  
+  
   </script>
 </body>
 
