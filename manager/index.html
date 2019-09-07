@@ -226,7 +226,7 @@
   <script>
     var params = {
       page: 1, //第几页
-      pagesNum: '', //总页数
+      keywords: '', //关键词
     }
 
     function loadData() {
@@ -235,7 +235,7 @@
           arr: res[0],
         });
         $('tbody').html(str);
-        params.pagesNum = Math.ceil((res[1][0].count) / 10);
+        params.pagesNum = Math.ceil((res[1][0].count) / 5);
         page(params.page, params.pagesNum);
       }, 'json');
     }
@@ -262,8 +262,14 @@
 
   <!-- 模糊搜索 -->
   <script>
-  
-  
+    // 模糊搜索
+    $('.btn-default').click(function (e) {
+      e.preventDefault();
+      params.keywords = $('.form-control').val();
+      //关键词查询的时候需要将page至为第一页
+      params.page = 1;
+      loadData();
+    });
   </script>
 </body>
 

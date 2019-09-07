@@ -56,10 +56,15 @@ app.use(bodyParser.urlencoded({
 
 //1.获取数据
 app.get('/getMsg', (req, res) => {
+    let keywords = req.query.keywords;
     let page = req.query.page || 1;
-    let pagesNum = 10;
-    let selectSql = 'select * from heroes order by id desc limit ' + (page - 1) * pagesNum + "," + pagesNum;
-    selectSql += ';select count(*) count from heroes';
+    let pagesNum = 5;
+    let keySql = "";
+    if (keywords != "") {
+        keySql = " where name like '%" + keywords + "%' " + " or nickname like '%" + keywords + "%'";
+    }
+    let selectSql = 'select * from heroes' + keySql + ' order by id desc limit ' + (page - 1) * pagesNum + "," + pagesNum;
+    selectSql += ';select count(*) count from heroes' + keySql;
     mysql(selectSql, null, (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -188,9 +193,7 @@ app.post('/saveEditMsg', upload.single('heroIcon'), (req, res) => {
     if (req.file != undefined) {
         values.file = req.file.filename;
     }
-    console.log(req.body)
     mysql(insertSql, [values, req.body.id], (err, result) => {
-        console.log(result)
         if (err) {
             res.send({
                 code: 210,
