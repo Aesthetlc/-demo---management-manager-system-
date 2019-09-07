@@ -29,10 +29,9 @@ app.use(session({
 //处理静态资源
 //设置如果用户没有登录除了注册页面,以及登录页面,其他页面不让访问的功能
 //自定义中间件
-// app.use(express.static('manager'));
 app.use(express.static('uploads'));
-app.use('/lib', express.static(__dirname + '/manager/lib'));
-app.use('/images', express.static(__dirname + '/manager/images'));
+app.use('/lib', express.static('manager/lib'));
+app.use('/images', express.static('manager/images'));
 app.use((req, res, next) => {
     if (req.url.endsWith('.html')) {
         if (req.url === "/login.html" || req.url === "/register.html") {
@@ -132,21 +131,30 @@ app.post('/login', (req, res) => {
     let loginSql = "select * from user where username = ? and password = ?"
     const username = req.body.username;
     const password = req.body.password;
-    mysql(loginSql, [username, password], (err, result) => {
-        if (result.length > 0) {
-            //将登录成功的状态存在session中,此状态为了以后访问页面的权限使用
-            req.session.isLogin = true;
-            res.send({
-                code: 200,
-                msg: "登录成功"
-            });
-        } else {
-            res.send({
-                code: 210,
-                msg: "登录失败"
-            });
-        }
-    })
+    const vcode = req.body.vcode.toUpperCase();
+    if (vcode != req.session.captcha.toUpperCase()) {
+        res.send({
+            code: 210,
+            msg: "验证码错误"
+        });
+    } else {
+        mysql(loginSql, [username, password], (err, result) => {
+            if (result.length > 0) {
+                //将登录成功的状态存在session中,此状态为了以后访问页面的权限使用
+                req.session.isLogin = true;
+                res.send({
+                    code: 200,
+                    msg: "登录成功"
+                });
+            } else {
+                res.send({
+                    code: 210,
+                    msg: "用户名或密码错误"
+                });
+            }
+        })
+    }
+
 });
 
 //6.获取指定id的数据
@@ -193,4 +201,15 @@ app.post('/saveEditMsg', upload.single('heroIcon'), (req, res) => {
         }
 
     })
+});
+
+//8.实现提供验证码的一个接口
+const svgCaptcha = require('svg-captcha');
+app.get('/getSvgCaptcha', (req, res) => {
+    //创建
+    const captcha = svgCaptcha.create();
+    //将生成的数据保存起来,存入到session中,为了登录之后进行比较
+    req.session.captcha = captcha.text;
+    res.type('svg');
+    res.status(200).send(captcha.data);
 });
